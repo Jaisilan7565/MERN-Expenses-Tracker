@@ -5,6 +5,9 @@ const errorHandler = require("./middlewares/errorHandlerMiddleware");
 const categoryRouter = require("./routers/categoryRouter");
 const transactionRouter = require("./routers/transactionRouter");
 
+// Cors is used for trusted frontend issues
+const cors = require("cors");
+
 const app = express();
 const PORT = process.env.PORT || 8000;
 
@@ -19,6 +22,13 @@ mongoose
   .catch((err) => {
     console.log(err.message);
   });
+
+// cors config
+const corsOptions = {
+  origin: "*",
+};
+
+app.use(cors(corsOptions));
 
 //To Parse JSON data
 app.use(express.json());
