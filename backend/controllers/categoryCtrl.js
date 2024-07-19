@@ -46,25 +46,24 @@ const categoryController = {
   //update
   update: asyncHandler(async (req, res) => {
     const categoryId = req.params.id;
-    const { name } = req.body;
-    if (!name) {
-      throw new Error("Name is required for updating the category");
-    }
+    const { type, name } = req.body;
     const normalizedName = name.toLowerCase();
     const category = await Category.findById(categoryId);
     if (!category && category.user.toString() !== req.user.toString()) {
-      throw new Error("Category not found or User not Authorized");
+      throw new Error("Category not found or user not authorized");
     }
     const oldName = category.name;
-
+    //! Update category properties
     category.name = normalizedName || category.name;
-
+    category.type = type || category.type;
     const updatedCategory = await category.save();
-
-    //Update the affected Transactions
+    //Update affected transaction
     if (oldName !== updatedCategory.name) {
       await Transaction.updateMany(
-        { user: req.user, category: oldName },
+        {
+          user: req.user,
+          category: oldName,
+        },
         { $set: { category: updatedCategory.name } }
       );
     }

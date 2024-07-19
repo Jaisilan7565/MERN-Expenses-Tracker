@@ -4,6 +4,7 @@ import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
 import { IoLogOutOutline } from "react-icons/io5";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 import { SiAuthy } from "react-icons/si";
 import { logoutAction } from "../../redux/slice/authSlice";
@@ -13,11 +14,14 @@ function classNames(...classes) {
 }
 
 export default function PrivateNavbar() {
+  const navigate = useNavigate();
+
   const dispatch = useDispatch();
   const logoutHandler = () => {
     dispatch(logoutAction());
     //remove the user from local storage
     localStorage.removeItem("userInfo");
+    navigate("/");
   };
 
   return (
