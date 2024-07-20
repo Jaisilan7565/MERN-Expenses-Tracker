@@ -3,7 +3,10 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { FaTrash, FaEdit } from "react-icons/fa";
 
 import { ChevronDownIcon } from "@heroicons/react/24/solid";
-import { listTransactionsAPI } from "../../services/transactions/transactionServices";
+import {
+  deleteTransactionsAPI,
+  listTransactionsAPI,
+} from "../../services/transactions/transactionServices";
 import { listCategoriesAPI } from "../../services/category/categoryServices";
 
 const TransactionList = () => {
@@ -45,6 +48,28 @@ const TransactionList = () => {
     queryFn: () => listTransactionsAPI(filters),
     queryKey: ["list-transactions", filters],
   });
+
+  // Mutation
+  const {
+    mutateAsync,
+    isPending,
+    isSuccess,
+    error: transactionError,
+  } = useMutation({
+    mutationFn: deleteTransactionsAPI,
+    mutationKey: ["delete-transaction"],
+  });
+
+  const handleDelete = async (id) => {
+    mutateAsync(id)
+      .then((data) => {
+        //Refetch or Refresh
+        refetch();
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
 
   return (
     <div className="my-4 p-4 shadow-lg rounded-lg bg-white">
@@ -135,12 +160,12 @@ const TransactionList = () => {
                   </span>
                 </div>
                 <div className="flex space-x-3">
-                  <button
+                  {/* <button
                     onClick={() => handleUpdateTransaction(transaction._id)}
                     className="text-blue-500 hover:text-blue-700"
                   >
                     <FaEdit />
-                  </button>
+                  </button> */}
                   <button
                     onClick={() => handleDelete(transaction._id)}
                     className="text-red-500 hover:text-red-700"

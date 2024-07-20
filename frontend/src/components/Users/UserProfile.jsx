@@ -3,10 +3,18 @@ import { FaUserCircle, FaEnvelope, FaLock } from "react-icons/fa";
 import { useFormik } from "formik";
 import UpdatePassword from "./UpdatePassword";
 import { updateProfileAPI } from "../../services/users/userServices";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
+import AlertMessage from "../Alert/AlertMessage";
+import { logoutAction } from "../../redux/slice/authSlice";
 
 const UserProfile = () => {
+  const { username, email } = JSON.parse(
+    localStorage.getItem("userInfo") || null
+  );
+
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   // Mutation
@@ -23,20 +31,34 @@ const UserProfile = () => {
 
     //Submit
     onSubmit: (values) => {
-      mutateAsync(values)
-        .then((data) => {
-          console.log(data);
-          navigate("/");
-        })
-        .catch((e) => console.log(e));
+      if (!values.email && !values.username) {
+        return;
+      } else {
+        if (values.email === "") {
+          values.email = email;
+        }
+        if (values.username === "") {
+          values.username = username;
+        }
+        // console.log(values);
+        mutateAsync(values)
+          .then((data) => {
+            // console.log(data);
+            dispatch(logoutAction());
+            //remove the user from local storage
+            localStorage.removeItem("userInfo");
+            navigate("/");
+          })
+          .catch((e) => console.log(e));
+      }
     },
   });
   return (
     <>
       <div className="max-w-4xl mx-auto my-10 p-8 bg-white rounded-lg shadow-md">
         <h1 className="mb-2 text-2xl text-center font-extrabold">
-          Welcome Masynctech
-          <span className="text-gray-500 text-sm ml-2">info@gmail.com</span>
+          Welcome {username}
+          <span className="text-gray-500 text-sm ml-2">{email}</span>
         </h1>
         <h3 className="text-xl font-semibold text-gray-800 mb-4">
           Update Profile
