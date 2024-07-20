@@ -102,7 +102,9 @@ const userController = {
     user.password = hashedPassword;
 
     //ReSave the user
-    await user.save();
+    await user.save({
+      validateBeforeSave: false,
+    });
 
     //send the response
     res.json({

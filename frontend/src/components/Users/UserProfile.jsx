@@ -2,8 +2,19 @@ import React from "react";
 import { FaUserCircle, FaEnvelope, FaLock } from "react-icons/fa";
 import { useFormik } from "formik";
 import UpdatePassword from "./UpdatePassword";
+import { updateProfileAPI } from "../../services/users/userServices";
+import { useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 
 const UserProfile = () => {
+  const navigate = useNavigate();
+
+  // Mutation
+  const { mutateAsync, isPending, isError, isSuccess, error } = useMutation({
+    mutationFn: updateProfileAPI,
+    mutationKey: ["update-profile"],
+  });
+
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -12,7 +23,12 @@ const UserProfile = () => {
 
     //Submit
     onSubmit: (values) => {
-      console.log(values);
+      mutateAsync(values)
+        .then((data) => {
+          console.log(data);
+          navigate("/");
+        })
+        .catch((e) => console.log(e));
     },
   });
   return (
@@ -25,6 +41,14 @@ const UserProfile = () => {
         <h3 className="text-xl font-semibold text-gray-800 mb-4">
           Update Profile
         </h3>
+
+        {isPending && <AlertMessage type="loading" message="Updating..." />}
+        {isError && (
+          <AlertMessage type="error" message={error.response.data.message} />
+        )}
+        {isSuccess && (
+          <AlertMessage type="success" message="Updated Successfully" />
+        )}
 
         <form onSubmit={formik.handleSubmit} className="space-y-6">
           {/* User Name Field */}
