@@ -43,7 +43,8 @@ __Features__
    cd backend
    node --watch --env-file=.env app.js
    ```
--     Start the frontend development server
+
+-   Start the frontend development server
    ```
    cd ../frontend
    npm run dev
