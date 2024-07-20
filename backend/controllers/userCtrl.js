@@ -58,7 +58,7 @@ const userController = {
     }
 
     //Generate a token
-    const token = jwt.sign({ id: user.id }, "jayking46Key", {
+    const token = jwt.sign({ id: user.id }, process.env.JWT_KEY, {
       expiresIn: "30d",
     });
 

@@ -13,9 +13,7 @@ const PORT = process.env.PORT || 8000;
 
 //DB Connection ("%40" is user for @) inside Password
 mongoose
-  .connect(
-    "mongodb+srv://doremon:Doremon%401432@expense-tracker.kound8h.mongodb.net/MERN-Expenses?retryWrites=true&w=majority&appName=expense-tracker"
-  )
+  .connect(process.env.MongoDB_Connection_String)
   .then(() => {
     console.log("DB Connected");
   })
